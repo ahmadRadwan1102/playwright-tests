@@ -11,7 +11,7 @@ export class ProductPage extends Base {
     }
 
     async addProduct(product:Locator) {
-        //await this.page.waitForTimeout(1500);
+        await this.page.waitForTimeout(1500);
         await this.selectFirstOptionIfExeist(Attribute.size, product);
         await this.selectFirstOptionIfExeist(Attribute.color, product);
 
