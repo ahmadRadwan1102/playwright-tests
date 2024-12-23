@@ -79,7 +79,7 @@ async function finishCheckoutAndPlaceOrder(isAuthRequired: boolean) {
     const orderNumber = sharedPage.locator('.checkout-success > p:first-child'); 
     await expect(orderNumber).toBeVisible();
     const orderNumberTextSelector = isAuthRequired ? 'a > strong' : ' > span'
-    console.log(orderNumberTextSelector)
+    //console.log(orderNumberTextSelector)
     const orderNumberText = await orderNumber.locator(orderNumberTextSelector).innerText();
     expect(orderNumberText).toMatch(/^\d+$/); // Ensure it's a valid order number
 

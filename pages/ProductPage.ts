@@ -11,7 +11,7 @@ export class ProductPage extends Base {
     }
 
     async addProduct(product:Locator) {
-        await this.page.waitForTimeout(1500);
+        //await this.page.waitForTimeout(1500);
         await this.selectFirstOptionIfExeist(Attribute.size, product);
         await this.selectFirstOptionIfExeist(Attribute.color, product);
 
@@ -29,7 +29,7 @@ export class ProductPage extends Base {
 
 
         const cart = this.page.locator('a.showcart');
-        await cart.waitFor({ state: 'visible', timeout: 10000 }); // Wait up to 10 seconds
+        await cart.waitFor({ state: 'visible', timeout: 2000 }); 
         await cart.click();
 
         await expect(this.page.locator('div[data-role="dropdownDialog"]')).toBeVisible();
