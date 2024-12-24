@@ -11,28 +11,35 @@ export class ProductPage extends Base {
     }
 
     async addProduct(product:Locator) {
-        await this.page.waitForTimeout(1500);
+        //await this.page.waitForTimeout(1500);
         await this.selectFirstOptionIfExeist(Attribute.size, product);
         await this.selectFirstOptionIfExeist(Attribute.color, product);
 
         const addToCartBtn = product.locator(`button[title="Add to Cart"]`);
         await expect(addToCartBtn).toBeVisible();
-        const responsePromise = this.page.waitForResponse('https://magento.softwaretestingboard.com/');
+        const responsePromise = this.page.waitForResponse(res => 
+            res.url().includes('https://magento.softwaretestingboard.com/') &&
+            res.status() === 200
+        );
         await addToCartBtn.click();
         const response = await responsePromise;
+        console.log(`Response received: ${response.status()}`);
 
 
     }
 
     async isDropDownVisible() {
-        await this.page.waitForTimeout(2000);
+        //await this.page.waitForTimeout(2000);
 
 
         const cart = this.page.locator('a.showcart');
-        await cart.waitFor({ state: 'visible', timeout: 2000 }); 
+        await this.page.waitForSelector('.showcart span.counter'); 
         await cart.click();
 
-        await expect(this.page.locator('div[data-role="dropdownDialog"]')).toBeVisible();
+        const dropdownDialog = this.page.locator('div[data-role="dropdownDialog"]');
+        await dropdownDialog.waitFor({ state: 'visible', timeout: 5000 }); 
+
+        await expect(dropdownDialog).toBeVisible();
     }
 
     private async selectFirstOptionIfExeist(attribute: Attribute, product: Locator) {
