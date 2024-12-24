@@ -14,7 +14,7 @@ export class ProductPage extends Base {
         //await this.page.waitForTimeout(1500);
         await this.selectFirstOptionIfExeist(Attribute.size, product);
         await this.selectFirstOptionIfExeist(Attribute.color, product);
-
+        await product.hover();
         const addToCartBtn = product.locator(`button[title="Add to Cart"]`);
         await expect(addToCartBtn).toBeVisible();
         const responsePromise = this.page.waitForResponse(res => 

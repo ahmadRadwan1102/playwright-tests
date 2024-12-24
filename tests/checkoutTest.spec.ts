@@ -1,9 +1,10 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page, Locator } from '@playwright/test';
 import { ProductPage } from '../pages/ProductPage';
 import { CheckoutPage } from '../pages/CheckoutPage';
 import { addProductToCart } from '../utils/addProductToCart';
 import { Shipping } from '../utils/ShipingType';
 import { authenticate } from '../utils/authenticate';
+import { waitForLocator } from '../utils/waitForLocator';
 require('dotenv').config();
 
 //const URL = 'https://magento.softwaretestingboard.com';
@@ -35,11 +36,9 @@ test.describe.configure({ mode: 'serial' });
 
 //Function to verify checkout and order placement
 async function finishCheckoutAndPlaceOrder(isAuthRequired: boolean) {
-    const shippingAddress = '.shipping-address-item';
+    const shippingAddress = sharedPage.locator('.shipping-address-item');
     //Check if the shipping address is not already filled
-    await sharedPage.waitForTimeout(500); // search for something to wait dynmaic 
-
-    const isShippingFilled = await sharedPage.isVisible(shippingAddress);
+    const isShippingFilled = await waitForLocator(shippingAddress)
 
     if (!isShippingFilled) {
         //Fill in shipping details if not already filled
@@ -51,13 +50,9 @@ async function finishCheckoutAndPlaceOrder(isAuthRequired: boolean) {
     await nextButton.scrollIntoViewIfNeeded();  
 
     await expect(nextButton).toBeVisible();
-    await sharedPage.waitForTimeout(2000);
-    //await sharedPage.locator('div.checkout-shipping-method').waitFor({state: 'visible'})
+    await sharedPage.waitForEvent('requestfinished')
     await nextButton.click();
 
-    // await sharedPage.waitForLoadState('networkidle')
-    // await nextButton.click();
-    
 
     await expect(sharedPage).toHaveURL(/.*\/checkout\/#payment.*/);
 
@@ -79,7 +74,7 @@ async function finishCheckoutAndPlaceOrder(isAuthRequired: boolean) {
     const orderNumber = sharedPage.locator('.checkout-success > p:first-child'); 
     await expect(orderNumber).toBeVisible();
     const orderNumberTextSelector = isAuthRequired ? 'a > strong' : ' > span'
-    //console.log(orderNumberTextSelector)
+
     const orderNumberText = await orderNumber.locator(orderNumberTextSelector).innerText();
     expect(orderNumberText).toMatch(/^\d+$/); // Ensure it's a valid order number
 
@@ -124,6 +119,8 @@ test.describe('Authenticated checkout tests', () => {
 
     test('verify that the order visible in order history', async () => {
         await sharedPage.click('div.header button.switch');
+       // await expect(sharedPage.locator('div.header span.customer-name')).toHaveClass(/active/, {timeout: 10000})
+
         await sharedPage.click('div.header .customer-menu  li:first-child a');
 
         await sharedPage.locator('.sidebar ul.items .item ')
