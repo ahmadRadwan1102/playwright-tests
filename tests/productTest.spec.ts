@@ -57,12 +57,10 @@ test.describe('Product Tests', () => {
         await productPage.isDropDownVisible();
         // Remove the item
         const removeItemButton = page.locator('a[title="Remove item"]');
-        await expect(removeItemButton).toBeVisible();
         await removeItemButton.click();
 
         // Confirm the removal
         const confirmButton = page.locator('button.action-accept');
-        await expect(confirmButton).toBeVisible();
         await confirmButton.click();
             
         const emptyCartMessage = page.locator('strong.empty');

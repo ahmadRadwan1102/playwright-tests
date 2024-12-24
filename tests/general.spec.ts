@@ -15,7 +15,6 @@ test.describe('General Tests', () => {
         await page.goto(URL, {waitUntil: 'domcontentloaded'})
         await expect(page).toHaveURL(URL)
         homePage = new HomePage(page);
-        loginPage = new LoginPage(page);
     })
     
     test('Verify That, the user is able to navigate to homepage and view products without authentication', async () => {
@@ -25,13 +24,16 @@ test.describe('General Tests', () => {
         await homePage.hasProducts();
     })
     
-    test('Verify that, the user can login successfuly and redirect to home page with shown welcome msg', async () => {
-        // isn't work in firefox fix the isses 
+    test('Verify that, the user can login successfuly and redirect to home page with shown welcome msg', async ({page}) => {
+        loginPage = new LoginPage(page);
+
         await homePage.page.locator(`header a[href*='login']`).click();
         await loginPage.VerifyPage('Login');
         await loginPage.signIn(EMAIL, PASSWORD);
-        // await loginPage.page.waitForTimeout(500);
+
         await homePage.isAuthenticated(async (locator: Locator) => await expect(locator).toBeVisible()); // ensure user authentication.
+        await loginPage.page.close();
+
     })
 
     test('Verify that, the User can search on a specific product', async ({ page }) => {
@@ -54,7 +56,6 @@ test.describe('General Tests', () => {
     test.afterEach(async () => {
         // Clean up after the test 
         await homePage.page.close();
-        await loginPage.page.close();
     });
 
 });

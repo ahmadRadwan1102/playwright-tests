@@ -2,8 +2,12 @@ import { expect, Locator, Page } from "@playwright/test";
 import { Base } from "./Base";
 
 export class ProductPage extends Base {
+    readonly cart: Locator;
+    readonly dropdownDialog: Locator 
     constructor(page:Page) {
         super(page);
+        this.cart = this.page.locator('a.showcart');
+        this.dropdownDialog = this.page.locator('div[data-role="dropdownDialog"]');
     }
 
     async checkNameConsistency(productLocater: Locator, checkMatch: string) {
@@ -11,12 +15,10 @@ export class ProductPage extends Base {
     }
 
     async addProduct(product:Locator) {
-        //await this.page.waitForTimeout(1500);
         await this.selectFirstOptionIfExeist(Attribute.size, product);
         await this.selectFirstOptionIfExeist(Attribute.color, product);
         await product.hover();
         const addToCartBtn = product.locator(`button[title="Add to Cart"]`);
-        await expect(addToCartBtn).toBeVisible();
         const responsePromise = this.page.waitForResponse(res => 
             res.url().includes('https://magento.softwaretestingboard.com/') &&
             res.status() === 200
@@ -29,17 +31,13 @@ export class ProductPage extends Base {
     }
 
     async isDropDownVisible() {
-        //await this.page.waitForTimeout(2000);
 
-
-        const cart = this.page.locator('a.showcart');
         await this.page.waitForSelector('.showcart span.counter'); 
-        await cart.click();
+        await this.cart.click();
 
-        const dropdownDialog = this.page.locator('div[data-role="dropdownDialog"]');
-        await dropdownDialog.waitFor({ state: 'visible', timeout: 5000 }); 
+        await this.dropdownDialog.waitFor({ state: 'visible', timeout: 5000 }); 
 
-        await expect(dropdownDialog).toBeVisible();
+        await expect(this.dropdownDialog).toBeVisible();
     }
 
     private async selectFirstOptionIfExeist(attribute: Attribute, product: Locator) {

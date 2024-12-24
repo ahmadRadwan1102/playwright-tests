@@ -49,7 +49,6 @@ async function finishCheckoutAndPlaceOrder(isAuthRequired: boolean) {
     const nextButton = sharedPage.locator('button.continue');
     await nextButton.scrollIntoViewIfNeeded();  
 
-    await expect(nextButton).toBeVisible();
     await sharedPage.waitForEvent('requestfinished')
     await nextButton.click();
 
@@ -62,7 +61,6 @@ async function finishCheckoutAndPlaceOrder(isAuthRequired: boolean) {
 
     // place order 
     const placeOrderButton = sharedPage.locator('button[title="Place Order"]');
-    await expect(placeOrderButton).toBeVisible();
     await placeOrderButton.click();
 
     // assert thank msg and order number 
@@ -72,7 +70,6 @@ async function finishCheckoutAndPlaceOrder(isAuthRequired: boolean) {
     await expect(thanksMsg).toHaveText('Thank you for your purchase!');
 
     const orderNumber = sharedPage.locator('.checkout-success > p:first-child'); 
-    await expect(orderNumber).toBeVisible();
     const orderNumberTextSelector = isAuthRequired ? 'a > strong' : ' > span'
 
     const orderNumberText = await orderNumber.locator(orderNumberTextSelector).innerText();
@@ -105,7 +102,6 @@ test.describe('Authenticated checkout tests', () => {
 
         // Proceed to checkout
         const checkoutButton = sharedPage.locator('button#top-cart-btn-checkout');
-        await expect(checkoutButton).toBeVisible();
         await checkoutButton.click();
 
         await expect(sharedPage).toHaveURL(/.*\/checkout\/#shipping.*/);

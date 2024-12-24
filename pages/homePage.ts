@@ -2,13 +2,14 @@ import { expect, Locator, Page } from "@playwright/test";
 import { Base } from "./Base";
 
 export class HomePage extends Base {
+    readonly customerWelcome: Locator
     constructor(page: Page) {
         super(page);
+        this.customerWelcome = this.page.locator(`header span:text('Welcome, ')`)
     }
 
     async isAuthenticated(condtion: (lcator: Locator) => Promise<void>) {
-        const welcome = this.page.locator(`header span:text('Welcome, ')`)
-        await condtion(welcome)
+        await condtion(this.customerWelcome)
     }
 
     async hasProducts() {
